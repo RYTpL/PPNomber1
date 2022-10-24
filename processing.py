@@ -8,11 +8,11 @@ from time import sleep
 def create_url(request):
     data = []
 
-    for n in range(1, 3):
+    for n in range(1, 10):
         print("Parsing ", n, " page")
         request.replace(' ', '%20')
         url = f'https://yandex.ru/images/search?text={request}&p={n}'
-        r = requests.get(url)  
+        r = requests.get(url)
         sleep(1)
         soup = BeautifulSoup(r.text, 'lxml')
         tmp = soup.find_all('img', class_='serp-item__thumb justifier__thumb')
@@ -24,13 +24,15 @@ def create_url(request):
 def create_dir(src):
     if not os.path.isdir('dataset'):
         os.mkdir('dataset')
-    if not os.path.exists(f'dataset/{src}'):
-        os.mkdir(f'dataset/{src}')
+    folder_name = os.path.join('dataset', src)
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
 
 
 def download_img(img_url, img_name, img_path):
     response = requests.get(img_url)
-    file = open(f"dataset/{img_path}/{img_name}.jpg", "wb")
+    file_name = os.path.join('dataset', img_path, img_name+'.jpg')
+    file = open(file_name, "wb")
     file.write(response.content)
     file.close()
 
@@ -43,4 +45,3 @@ def run(class_name):
         number += 1
         if (number % 10 == 0):
             print('downloded: ', number)
-        sleep(1)
